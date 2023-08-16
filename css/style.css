@@ -1,0 +1,71 @@
+html {
+    background-color: black;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.canvas {
+    background-color: black;
+    overflow:hidden;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+}
+
+.square {
+    width: 15px;
+    height: 15px;
+    background-color: black;
+    margin: 2px;
+}
+
+.snake {
+    background-color: white;
+}
+
+.target {
+    background-color: red;
+}
+
+.hide {
+    display:none !important;
+}
+
+.popup {
+    position: fixed; /* Stay in place */
+    z-index: 2; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: -moz-hidden-unscrollable;
+    background-color: rgba(0,0,0,0.4);
+  }
+
+  .popup-content {
+    margin: 5% auto;
+    padding: 20px;
+    width: 100%;
+    color: white;
+  }
+
+  .center {
+    margin: 0 auto;
+  }
+
+  .helvetica {
+    font-family: Arial, Helvetica, sans-serif;
+  }
