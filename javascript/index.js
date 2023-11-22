@@ -86,7 +86,7 @@ function loop() {
     
     // Check if the loop should continue
     if (isStarted && !isPaused) {
-        // If count is less than 5, pause for 1 second and then continue the loop
+        
         setTimeout(loop, 50); 
     } 
 }
@@ -96,11 +96,13 @@ function endOfGame() {
     var tab = "&nbsp&nbsp&nbsp&nbsp";
     var titleMessage = document.getElementById("title-message");
     var scores = document.getElementById("scores");
+    var keyText = document.getElementById("start-key");
     if(score > highScore) saveHighScore();
     
 
     titleMessage.innerHTML = "Game Over";
     scores.innerHTML = "Your Score: " + score + tab + "High Score: " + highScore;
+    keyText.innerHTML = "Press space to start";
 
     isStarted = false;
     score = 0;  
@@ -331,15 +333,22 @@ function onStart() {
     }
 }
 
-document.addEventListener("keypress", (event) => {
-    if(event.key == " " && !isStarted) {
-        start();
-    }
+document.addEventListener("keyup", (event) => {
     if(isPaused) {
         var resumed = true;
         document.getElementById("popup").classList.add("hide");
         isPaused = false;
         loop();
+    }
+    if(event.key == 'p' && !isPaused && !resumed && isStarted) {
+        isPaused = true;
+        pause();
+    }
+});
+
+document.addEventListener("keypress", (event) => {
+    if(event.key == " " && !isStarted) {
+        start();
     }
     if(snakeDirection != "down" && event.key == 'w') {
         prevDirection = snakeDirection;
@@ -357,10 +366,7 @@ document.addEventListener("keypress", (event) => {
         prevDirection = snakeDirection;
         snakeDirection = 'left';
     }
-    if(event.key == 'p' && !isPaused && !resumed) {
-        isPaused = true;
-        pause();
-    }
+
 });
 
 function pause() {
