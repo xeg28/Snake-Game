@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="./css/style.css">
+    <script src="./js/script.js"></script>
+    <title>Snake Game</title>
+</head>
+<body>
+    <div class="helvetica" id="score">Score: 0</div>
+    <div class="canvas" id="canvas">
+    </div>
+    <div class="popup" id="title-screen">
+        <div class="popup-content">
+            <div class="row">
+                <div class="col center">
+                    <div class="fs-xl helvetica" id="title-message">Snake Game</div>
+                    <div class="fs-600 high-score helvetica" id="scores">High Score: 00</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col center options">
+                    <a href="#" onclick="speedMenu()" class="helvetica" id="speed">Change Speed</a>
+                    <a href="#" onclick="controls()"class="helvetica" id="controls">Controls</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col center">
+                    <div class="fs-600 prompt-start helvetica" id="start-key">Press space to start</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="popup hide" id="speed-menu">
+        <div class="popup-content">
+            <div class="row">
+                <div class="col center">
+                    <div class="fs-600 title helvetica" style="color:red;">Speed Menu</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col center options" id="speed-options">
+                    <a class="helvetica" href="#" onclick="changeSpeed(33.3)">Slow</a>
+                    <a class="helvetica" href="#" onclick="changeSpeed(22.2)">Fast</a>
+                    <a class="helvetica" href="#" onclick="changeSpeed(16.7)">Full Speed</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col center options">
+                    <a class="helvetica" href="#" onclick="speedMenu()">Back</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="popup hide" id="control-menu">
+        <div class="popup-content">
+            <div class="row">
+                <div class="col center">
+                    <div class="fs-600 title helvetica" style="color:red;">Controls</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col center" id="controls">
+                    <div class="fs-400 helvetica" >Move up: W</div>
+                    <div class="fs-400 helvetica" >Move left: A</div>
+                    <div class="fs-400 helvetica" >Move down: S</div>
+                    <div class="fs-400 helvetica" >Move right: D</div>
+                    <div class="fs-400 helvetica" >Pause: P</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col center options">
+                    <a class="helvetica" href="#" onclick="controls()">Back</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

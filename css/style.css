@@ -8,6 +8,47 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow:hidden;
+}
+
+a {
+    color:white;
+    text-decoration: none;
+}
+
+#title-message {
+    color: red; 
+}
+
+.fs-xl {
+    font-size: clamp(1rem, 1rem + 6vw, 8rem);
+}
+
+.fs-600 {
+    font-size: clamp(.5rem, .5rem + 4vw, 4rem);
+}
+
+.fs-400 {
+    font-size: clamp(.5rem, .3rem + 3vw, 3rem);
+}
+
+.options {
+    font-size: clamp(.5rem, .3rem + 3vw, 3rem);
+}
+
+.options a:hover {
+    cursor:pointer;
+    color: #9b9b9b;
+}
+
+#score {
+    position:fixed;
+    z-index: 1;
+    top:0;
+    color:rgba(255,255,255, 0.5);
+    text-shadow: 1px 1px 1px black;
+    margin-top: 2vh;
+    font-size: clamp(.5rem, .5rem + 2.5vw, 1.5rem);
 }
 
 .canvas {
@@ -23,6 +64,8 @@ body {
 .col {
     display: flex;
     flex-direction: column;
+    row-gap: 1rem;
+    align-items: center;
 }
 
 .square {
@@ -40,25 +83,31 @@ body {
     background-color: red;
 }
 
+.death {
+    background-color: #343434;
+}
+
 .hide {
     display:none !important;
 }
 
 .popup {
-    position: fixed; /* Stay in place */
-    z-index: 2; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
+    position: fixed;
+    z-index: 2;
+    width: 100vw;
+    height: 100svh;
     overflow: -moz-hidden-unscrollable;
-    background-color: rgba(0,0,0,0.4);
+    background-color: rgba(0,0,0,0.8);
+    display:flex;
+    justify-content: center;
+    align-items: center;
   }
+  
 
   .popup-content {
-    margin: 5% auto;
-    padding: 20px;
-    width: 100%;
+    display: grid;
+    gap: 5svh;
+    margin: 0 auto;
     color: white;
   }
 

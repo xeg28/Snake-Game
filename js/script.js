@@ -8,13 +8,15 @@ var snakeDirection = "";
 var prevDirection = "";
 var isStarted = false;
 var isPaused = false;
-var score = 1;
+var score = 0;
 var highScore = 0;
+var loopTime = 33.3;
 
 function start() {
     onStart();
     isStarted = true;
-    document.getElementById("popup").classList.add("hide");
+    document.getElementById("title-screen").classList.add("hide");
+    document.getElementById("score").innerHTML = "Score: 0";
 
     const canvas = document.getElementById("canvas");
     var start = {row: Math.round(rows/2), col: Math.round(cols/2)};
@@ -38,16 +40,16 @@ function deathAnimation(index) {
     var row = canvas.children[snake[index][0]];
     var col = row.children[snake[index][1]];
     col.firstChild.classList.remove("snake");
-    col.firstChild.classList.add("target");
+    col.firstChild.classList.add("death");
 
     if(index < snake.length - 1) {
         setTimeout(function() {
             deathAnimation(index + 1);
-        }, 100);
+        }, 50);
     } 
     else {
-        var popup = document.getElementById("popup");
-        popup.classList.remove("hide");  
+        var titleScreen = document.getElementById("title-screen");
+        titleScreen.classList.remove("hide");  
     }
 } 
 
@@ -66,28 +68,28 @@ function setHighScore() {
 
 function loop() {
     const canvas = document.getElementById("canvas");
-
+    var row = canvas.children[snake[0][0]];
+    var col = row.children[snake[0][1]];
     if(!isStarted) {
         return;
     }
 
     if(snakeDirection == "up") {
-       moveUp(canvas);
+        moveDirection(canvas, row, col, -1);
     }
     else if(snakeDirection == "left") {
-        moveLeft(canvas);
+        moveDirection(canvas, row, col, -1);
     }
     else if(snakeDirection == "down") {
-        moveDown(canvas);
+        moveDirection(canvas, row, col, 1);
     }
     else {
-        moveRight(canvas);
+        moveDirection(canvas, row, col, 1);
     }
     
     // Check if the loop should continue
     if (isStarted && !isPaused) {
-        
-        setTimeout(loop, 50); 
+        setTimeout(loop, loopTime); 
     } 
 }
 
@@ -99,7 +101,6 @@ function endOfGame() {
     var keyText = document.getElementById("start-key");
     if(score > highScore) saveHighScore();
     
-
     titleMessage.innerHTML = "Game Over";
     scores.innerHTML = "Your Score: " + score + tab + "High Score: " + highScore;
     keyText.innerHTML = "Press space to start";
@@ -118,52 +119,44 @@ function checkOverflow(val, type) {
 function checkIfBackwards() {
     if(snake[0][0] == snake[2][0] && snake[0][1] == snake[2][1]) {
         console.log("backwards detected");
-        var canvas = document.getElementById("canvas");
-        snake.shift();
-        if(prevDirection == 'up') {
-            moveUp(canvas);
-        }
-        else if(prevDirection == 'down') {
-            moveDown(canvas);
-        }
-        else if(prevDirection == 'right') {
-            moveRight(canvas);
-        }
-        else {
-            moveLeft(canvas);
-        }
         return true;
     }
     return false;
 }
 
 
-function moveUp(canvas){ 
-    var row = canvas.children[snake[0][0]];
-    var col = row.children[snake[0][1]];
-    var targetCaught = false;
-    snake.unshift([checkOverflow(snake[0][0] - 1, "row"), snake[0][1]]);
+function moveDirection(canvas, row, col, shiftValue){
+    if(snakeDirection == "up" || snakeDirection == "down") {
+        snake.unshift([checkOverflow(snake[0][0] + shiftValue, "row"), snake[0][1]]);
+    } else {
+        snake.unshift([snake[0][0], checkOverflow(snake[0][1] + shiftValue, "col")]);
+    }
 
-    if(snake.length > 2 && checkIfBackwards()) return;
+    if(snake.length > 2 && checkIfBackwards()) {
+        snake.shift();
+        if(prevDirection == "down") snake.unshift([checkOverflow(snake[0][0] + 1, "row"), snake[0][1]]);
+        else if(prevDirection == "up") snake.unshift([checkOverflow(snake[0][0] - 1, "row"), snake[0][1]]);
+        else if(prevDirection == "left") snake.unshift([snake[0][0], checkOverflow(snake[0][1] - 1, "col")]);
+        else snake.unshift([snake[0][0], checkOverflow(snake[0][1] + 1, "col")]);
+    }
 
     row = canvas.children[snake[0][0]];
     col = row.children[snake[0][1]];
-
 
     if(col.firstChild.classList.contains("snake")){ 
         snake.shift();
         endOfGame();
         return;
     }   
-        else {col.firstChild.classList.add("snake");}
+    else {col.firstChild.classList.add("snake");}
     
     if(col.firstChild.classList.contains("target")){
         col.firstChild.classList.remove("target");
-        targetCaught = true;
         generateTarget();
         score++;
+        document.getElementById("score").innerHTML = "Score: " + score;
     }
-    if(!targetCaught) {
+    else {
         var tail = snake.pop();
         row = canvas.children[tail[0]];
         col = row.children[tail[1]];
@@ -171,101 +164,6 @@ function moveUp(canvas){
     }
 }
 
-function moveDown(canvas) {
-    var row = canvas.children[snake[0][0]];
-    var col = row.children[snake[0][1]];
-    var targetCaught = false;
-    snake.unshift([checkOverflow(snake[0][0] + 1, "row"), snake[0][1]]);
-
-    if(snake.length > 2 && checkIfBackwards()) return;
-    
-    row = canvas.children[snake[0][0]];
-    col = row.children[snake[0][1]];
-
-    if(col.firstChild.classList.contains("snake")) {
-        snake.shift();
-        endOfGame();
-        return;
-    }    
-    else {col.firstChild.classList.add("snake");}
-
-    if(col.firstChild.classList.contains("target")) {
-        col.firstChild.classList.remove("target");
-        targetCaught = true;
-        generateTarget();
-        score++;
-    }
-    if(!targetCaught) {
-        var tail = snake.pop();
-        row = canvas.children[tail[0]];
-        col = row.children[tail[1]];
-        col.firstChild.classList.remove("snake");
-    }
-}
-
-function moveLeft(canvas) {
-    var row = canvas.children[snake[0][0]];
-    var col = row.children[snake[0][1]];
-    var targetCaught = false;
-    snake.unshift([snake[0][0], checkOverflow(snake[0][1] - 1, "col")]);
-
-    if(snake.length > 2 && checkIfBackwards()) return;
-    
-    row = canvas.children[snake[0][0]];
-    col = row.children[snake[0][1]];
-
-    if(col.firstChild.classList.contains("snake")) {
-        snake.shift();
-        endOfGame();
-        return;
-    }     
-    else {col.firstChild.classList.add("snake");}
-
-    if(col.firstChild.classList.contains("target")) {
-        col.firstChild.classList.remove("target");
-        targetCaught = true;
-        generateTarget();
-        score++
-    }
-    if(!targetCaught) {
-        var tail = snake.pop();
-        row = canvas.children[tail[0]];
-        col = row.children[tail[1]];
-        col.firstChild.classList.remove("snake");
-    }
-}
-
-function moveRight(canvas) {
-    var row = canvas.children[snake[0][0]];
-    var col = row.children[snake[0][1]];
-    var targetCaught = false;
-    snake.unshift([snake[0][0], checkOverflow(snake[0][1] + 1, "col")]);
-
-    if(snake.length > 2 && checkIfBackwards()) return;
-
-    var row = canvas.children[snake[0][0]];
-    var col = row.children[snake[0][1]];
-
-    if(col.firstChild.classList.contains("snake")) {
-        snake.shift();
-        endOfGame();
-        return;
-    }    
-    else {col.firstChild.classList.add("snake");}
-    
-    if(col.firstChild.classList.contains("target")) {
-        col.firstChild.classList.remove("target");
-        targetCaught = true;
-        generateTarget();
-        score++;
-    }
-    if(!targetCaught) {
-        var tail = snake.pop();
-        row = canvas.children[tail[0]];
-        col = row.children[tail[1]];
-        col.firstChild.classList.remove("snake");
-    }
-}
 
 function generateTarget() {
     const canvas = document.getElementById("canvas");
@@ -273,12 +171,13 @@ function generateTarget() {
     var colIndex =  Math.floor(Math.random() * cols);
 
     var foundCollision = false;
-    snake.forEach((coord) => {
-        if(coord[0] == rowIndex && coord[1] == colIndex) {
+    for(let index = 0; index < snake.length; index++) {
+        if(snake[index][0] == rowIndex && snake[index][1] == colIndex) {
+            console.log("found a collision");
             foundCollision = true;
-            return;
+            break;
         }
-    });
+    }
 
     if (foundCollision) {
         generateTarget();
@@ -294,17 +193,18 @@ function generateTarget() {
 
 function setUpTitleScreen() {
     setHighScore();
-    var popup = document.getElementById("popup");
+    var titleScreen = document.getElementById("title-screen");
     var score = document.getElementById("scores");
     score.innerHTML= "High Score: " + highScore; 
 }
 
 function onStart() {
     const canvas = document.getElementById("canvas");
+    score = 0;
     setUpTitleScreen();
     if(isStarted) {
         isStarted = false;
-        document.getElementById("popup").classList.remove("hide");   
+        document.getElementById("title-screen").classList.remove("hide");   
     }
 
     while (canvas.firstChild) {
@@ -334,9 +234,10 @@ function onStart() {
 }
 
 document.addEventListener("keyup", (event) => {
-    if(isPaused) {
+    let titleScreen = document.getElementById("title-screen");
+    if(isPaused && !titleScreen.classList.contains('hide')) {
         var resumed = true;
-        document.getElementById("popup").classList.add("hide");
+        titleScreen.classList.add("hide");
         isPaused = false;
         loop();
     }
@@ -347,7 +248,8 @@ document.addEventListener("keyup", (event) => {
 });
 
 document.addEventListener("keypress", (event) => {
-    if(event.key == " " && !isStarted) {
+    let titleScreen = document.getElementById("title-screen");
+    if(event.key == " " && !isStarted && !titleScreen.classList.contains('hide')) {
         start();
     }
     if(snakeDirection != "down" && event.key == 'w') {
@@ -371,16 +273,31 @@ document.addEventListener("keypress", (event) => {
 
 function pause() {
     var tab = "&nbsp&nbsp&nbsp&nbsp";
-    var popup = document.getElementById("popup");
+    var titleScreen = document.getElementById("title-screen");
     var title = document.getElementById("title-message");
     var scores = document.getElementById("scores");
     var keyText = document.getElementById("start-key");
-    scores.innerHTML = "Your Score: " + score + tab + "High Score: " + highScore;
+    scores.innerHTML = "Current Score: " + score + tab + "High Score: " + highScore;
     title.innerHTML = "Paused";
     keyText.innerHTML = "Press any key to resume"
-    popup.classList.remove("hide");
+    titleScreen.classList.remove("hide");
 }
 
+function speedMenu() {
+    document.getElementById("title-screen").classList.toggle("hide");
+    document.getElementById("speed-menu").classList.toggle("hide");
+}
+
+function controls() {
+    document.getElementById("title-screen").classList.toggle("hide");
+    document.getElementById("control-menu").classList.toggle("hide");
+}
+
+function changeSpeed(speed) {
+    document.getElementById("title-screen").classList.toggle("hide");
+    document.getElementById("speed-menu").classList.toggle("hide");
+    loopTime = speed;
+}
 
 window.onload = onStart;
 window.addEventListener("resize", onStart);
