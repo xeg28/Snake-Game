@@ -76,7 +76,7 @@ a {
 }
 
 .snake {
-    background-color: white;
+    background-color: white !important;
 }
 
 .target {
@@ -96,6 +96,8 @@ a {
     z-index: 2;
     width: 100vw;
     height: 100svh;
+    top: 0;
+    left:0;
     overflow: -moz-hidden-unscrollable;
     background-color: rgba(0,0,0,0.8);
     display:flex;
@@ -104,7 +106,7 @@ a {
   }
   
 
-  .popup-content {
+.popup-content {
     display: grid;
     gap: 5svh;
     margin: 0 auto;

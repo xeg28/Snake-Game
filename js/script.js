@@ -10,7 +10,8 @@ var isStarted = false;
 var isPaused = false;
 var score = 0;
 var highScore = 0;
-var loopTime = 33.3;
+var frameTime = 33.3;
+var lastFrameTime = 0;
 
 function start() {
     onStart();
@@ -31,7 +32,7 @@ function start() {
     generateTarget();
 
     // Start the loop
-    loop();
+    loop(frameTime);
 }
 
 function deathAnimation(index) {
@@ -66,11 +67,16 @@ function setHighScore() {
 }
 
 
-function loop() {
+function loop(timestamp) {
+    const elapsed = timestamp - lastFrameTime;
+    if(elapsed < frameTime) {
+        requestAnimationFrame(loop);
+        return;
+    }
     const canvas = document.getElementById("canvas");
     var row = canvas.children[snake[0][0]];
     var col = row.children[snake[0][1]];
-    if(!isStarted) {
+    if(!isStarted || isPaused) {
         return;
     }
 
@@ -86,11 +92,9 @@ function loop() {
     else {
         moveDirection(canvas, row, col, 1);
     }
-    
-    // Check if the loop should continue
-    if (isStarted && !isPaused) {
-        setTimeout(loop, loopTime); 
-    } 
+    lastFrameTime = timestamp;
+    if(frameTime == 22.22) setTimeout(loop, 22.2);
+    else requestAnimationFrame(loop);
 }
 
 function endOfGame() {
@@ -193,8 +197,9 @@ function generateTarget() {
 
 function setUpTitleScreen() {
     setHighScore();
-    var titleScreen = document.getElementById("title-screen");
     var score = document.getElementById("scores");
+    document.getElementById("title-message").innerHTML = "Snake Game";
+    document.getElementById("start-key").innerHTML = "Press space to start";
     score.innerHTML= "High Score: " + highScore; 
 }
 
@@ -202,9 +207,19 @@ function onStart() {
     const canvas = document.getElementById("canvas");
     score = 0;
     setUpTitleScreen();
+    document.getElementById('start-key').addEventListener("touchstart", e => {
+        if(!isStarted) {
+            isStarted = true;
+            start();
+        }
+    });
     if(isStarted) {
         isStarted = false;
         document.getElementById("title-screen").classList.remove("hide");   
+    }
+
+    if(isPaused) {
+        isPaused = false;
     }
 
     while (canvas.firstChild) {
@@ -296,8 +311,60 @@ function controls() {
 function changeSpeed(speed) {
     document.getElementById("title-screen").classList.toggle("hide");
     document.getElementById("speed-menu").classList.toggle("hide");
-    loopTime = speed;
+    frameTime = speed;
 }
+
+
+// Mobile controls
+var touchstartX = 0;
+var touchendX = 0;
+var touchstartY = 0;
+var touchendY = 0;
+    
+function checkDirection() {
+    let totalX = touchendX - touchstartX;
+    let totalY = touchendY - touchstartY;
+    if(totalX === 0 && totalY === 0) return snakeDirection;
+    if(totalX === 0) {
+        return (totalY < 0) ? "up" : "down";
+    }
+    if(totalY === 0) {
+        return (totalX < 0) ? "left" : "right";
+    }
+
+    if(Math.abs(totalX) > Math.abs(totalY)) return (totalX < 0) ? "left" : "right";
+    else return (totalY < 0) ? "up" : "down";
+}
+
+document.addEventListener('touchstart', e => {
+    touchstartX = e.changedTouches[0].screenX;
+    touchstartY = e.changedTouches[0].screenY;
+});
+
+document.addEventListener('touchmove', e => {
+    touchendX = e.changedTouches[0].screenX;
+    touchendY = e.changedTouches[0].screenY;
+    let directionDetected = checkDirection();
+    if(prevDirection != "up" && directionDetected == "down") {
+        prevDirection = snakeDirection;
+        snakeDirection = directionDetected;
+    }
+    else if(prevDirection != "down" && directionDetected == "up") {
+        prevDirection = snakeDirection;
+        snakeDirection = directionDetected;
+    }
+    else if(prevDirection != "left" && directionDetected == "right") {
+        prevDirection = snakeDirection;
+        snakeDirection = directionDetected;
+    }
+    else if(prevDirection != "right" && directionDetected == "left") {
+        prevDirection = snakeDirection;
+        snakeDirection = directionDetected;
+    }
+});
 
 window.onload = onStart;
 window.addEventListener("resize", onStart);
+
+
+
