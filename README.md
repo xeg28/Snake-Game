@@ -10,8 +10,8 @@ I created my own version of the snake game to gain some experience with HTML, CS
 * The high score is kept.
     * The high score is kept on the browser that performed the highest score.
 
-# Try it here
+## Try it here
 [Snake Game](https://xeg28.github.io/Snake-Game)
 
-# License
+## License
 [MIT](https://choosealicense.com/licenses/mit/)
